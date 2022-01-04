@@ -1,0 +1,78 @@
+-- Creating a schema
+--create schema company;
+
+drop table if exists employees;
+create table if not exists employees(
+	e_id serial primary key,
+	e_name varchar(10) not null,
+	e_username varchar(10) unique,
+	e_password varchar(10) not null,
+	e_role varchar(10),
+	man_e_id integer references employees(e_id)
+);
+
+drop table if exists customers;
+create table if not exists customers(
+	c_id serial primary key,
+	c_name varchar(10) not null,
+	c_username varchar(10) unique,
+	c_password varchar(10) not null
+);
+
+select *  from hats where h_ownedBy_id = 1;
+
+drop table if exists hats;
+create table if not exists hats(
+	h_id serial primary key,
+	h_type varchar(10) not null,
+	h_price integer,
+	h_color varchar(10) not null,
+	h_size varchar(10) not null,
+	h_ownedBy_id integer references customers(c_id)
+);
+
+drop table if exists offers;
+create table if not exists offers(
+	o_id serial primary key,
+	o_hat integer references hats(h_id),
+	o_offer decimal not null,
+	o_acceptoffer varchar(10) NOT NULL DEFAULT 'false',
+	o_customer integer references customers(c_id)
+); 
+
+drop table if exists pay;
+create table if not exists pay(
+p_id serial primary key,
+p_customer integer references customers(c_id),
+p_hat integer references hats(h_id),
+p_payed decimal not null,
+p_remaining decimal not null
+);
+
+drop table if exists subscribers;
+create table if not exists subscribers(
+s_id serial primary key,
+s_customer integer references customers(c_id),
+s_news text
+);
+
+select h_id, h_type from hats h join offers o on h.h_id=o.o_hat; 
+select o_hat, o_offer from offers o join pay p on p.p_customer = o.o_customer;
+
+insert into pay (p_customer, p_hat, p_payed, p_remaining) values ('1', '8', '10', '20');
+
+insert into employees (e_name, e_username, e_password, e_role) values ('james', 'jwells', 'wells', 'VP Sales');
+insert into employees (e_name, e_username, e_password, e_role) values ('Jamey', 'jshitl', 'TI8Wm', 'SafetyTech');
+select h_type,h_color,h_size from hats where h_ownedBy_id is NULL;
+delete from hats where h_id = 4;
+
+insert into subscribers(s_customer) values (1);
+
+
+insert into offers (o_hat, o_offer, o_acceptoffer, o_customer) values ('2', '30','false', null);
+
+update employees set man_e_id = 1;
+
+delete offers Where o_id = 3;
+
+select * from offers where o_acceptoffer = 'false';
